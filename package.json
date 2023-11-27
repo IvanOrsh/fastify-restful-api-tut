@@ -7,8 +7,10 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "todo:fix1": "nodemon --exec ts-node --esm src/app.ts --project ./tsconfig.json",
-    "todo:fix": "tsnd --respawn --transpile-only --exit-child src/app.ts",
+    "docker:up": "docker-compose up -d --build",
+    "docker:down": "docker-compose down",
+    "docker:nuke": "docker-compose down -v --rmi all",
+    "db:migrate:dev": "pnpx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
