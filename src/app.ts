@@ -1,5 +1,6 @@
 import { fastify, type FastifyServerOptions } from "fastify";
 import userRoutes from "./modules/user/user.route";
+import { userSchemas } from "./modules/user/user.schema";
 
 const serverOptions: FastifyServerOptions = {
   logger: true,
@@ -14,6 +15,11 @@ server.get("/healthcheck", async function () {
 });
 
 void (async function main(): Promise<void> {
+  // add schemas before registering routes
+  for (const schema of userSchemas) {
+    server.addSchema(schema);
+  }
+
   server.register(userRoutes, {
     prefix: "/api/users",
   });

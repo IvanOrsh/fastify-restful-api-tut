@@ -30,5 +30,6 @@ module.exports = {
     "@typescript-eslint/space-before-function-paren": "off",
     "no-floating-promise": "off",
     "@typescript-eslint/no-floating-promises": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
   },
 };
