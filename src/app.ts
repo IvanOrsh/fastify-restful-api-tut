@@ -1,4 +1,5 @@
 import { fastify, type FastifyServerOptions } from "fastify";
+import userRoutes from "./modules/user/user.route";
 
 const serverOptions: FastifyServerOptions = {
   logger: true,
@@ -12,11 +13,11 @@ server.get("/healthcheck", async function () {
   };
 });
 
-server.addHook("onReady", () => {
-  console.log("onReady");
-});
-
 void (async function main(): Promise<void> {
+  server.register(userRoutes, {
+    prefix: "/api/users",
+  });
+
   try {
     const address = await server.listen({
       port: 3000,

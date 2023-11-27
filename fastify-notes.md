@@ -1,3 +1,14 @@
+- [1. What is Fastify?](#1-what-is-fastify)
+  - [1.1 Overview](#11-overview)
+  - [1.2 Fastify Components](#12-fastify-components)
+  - [1.3 Start server with `fastify`](#13-start-server-with-fastify)
+  - [1.4 Lifecycles and hooks overview](#14-lifecycles-and-hooks-overview)
+    - [1.4.1 Application lifecycle](#141-application-lifecycle)
+    - [1.4.2 Request lifecycle](#142-request-lifecycle)
+  - [1.5 The Root Application Instance](#15-the-root-application-instance)
+    - [1.5.1 Server options](#151-server-options)
+    - [1.5.2 Application instance properties](#152-application-instance-properties)
+
 # 1. What is Fastify?
 
 ## 1.1 Overview
@@ -135,3 +146,34 @@ The server will process the request in two phases:
 
 - The **routing**: This step must find the function that must evaluate the request.
 - The **handling** of the request performs a set of events that compose the request lifecycle.
+
+The request triggers these events in order during its handling:
+
+1. `onRequest`: The server receives an HTTP request and routes it to a valid endpoint. Now, the request is ready to be processed.
+2. `preParsing` happens before the evaluation of the request’s body payload.
+3. The `preValidation` hook runs before applying **JSON Schema validation** to the request’s parts. Schema validation is an essential step of every route because it protects you from a malicious request payload that aims to leak your system data or attack your server.
+4. `preHandler` executes before the endpoint handler.
+5. `preSerialization` takes action before the response payload transformation to a String, a Buffer, or a Stream, in order to be sent to the client.
+6. `onError` is executed only if an error happens during the request lifecycle.
+7. `onSend` is the last chance to manipulate the response payload before sending it to the client.
+8. `onResponse` runs after the HTTP request has been served.
+
+## 1.5 The Root Application Instance
+
+The root application instance is the main API you need to create. All the functions controlling the incoming client's request must be registered to it, and this provides a set of helpers that let you best organize the application.
+
+### 1.5.1 Server options
+
+- `logger`
+- `https: object` sets up the server to listen for **Transport Layer Security** (TLS) sockets.
+- `keepAliveTimeout`, `connectionTimeout`, `http2SessionTimeout` are several timeout parameters after which the HTTP request socket will be destroyed, releasing the server resources. (these params are forwarded to the standard Node.js `http.Server`)
+- Routing customization to provide stricter or laxer constraints—for instance, a case-insensitive URL and more granular control to route a request to a handler based on additional information, such as a request header instead of an HTTP method and HTTP URL.
+- `maxParamLength: number<length>` limits the path parameter string length.
+- `bodyLimit: number<byte>` caps the request body payload size.
+- `http2: boolean` starts an HTTP2 server, which is useful to create a long-lived connection that optimizes the exchange of data between client and server.
+- The `ajv` parameter tweaks the validation defaults to improve the fit of your setup.
+- The `serverFactory`: function manages the low-level HTTP server that is created. This feature is a blessing when working in a serverless environment.
+- The `onProtoPoisoning` and `onConstructorPoisoning` default security settings are the most conservative and provide you with an application that's secure by default. Changing them is risky and you should consider all the security issues because it impacts the default
+  request body parser and can lead to code injection.
+
+### 1.5.2 Application instance properties
