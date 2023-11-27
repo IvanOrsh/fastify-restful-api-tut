@@ -1,6 +1,10 @@
 import { type FastifyInstance } from "fastify";
 
-import { registerUserHandler, loginHandler } from "./user.controller";
+import {
+  registerUserHandler,
+  loginHandler,
+  getUsersHandler,
+} from "./user.controller";
 import { $ref } from "./user.schema";
 
 async function userRoutes(server: FastifyInstance): Promise<void> {
@@ -28,6 +32,14 @@ async function userRoutes(server: FastifyInstance): Promise<void> {
       },
     },
     loginHandler
+  );
+
+  server.get(
+    "/",
+    {
+      preHandler: [server.authenticate],
+    },
+    getUsersHandler
   );
 }
 

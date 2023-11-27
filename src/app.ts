@@ -9,6 +9,12 @@ import fjwt from "@fastify/jwt";
 import userRoutes from "./modules/user/user.route";
 import { userSchemas } from "./modules/user/user.schema";
 
+declare module "fastify" {
+  export interface FastifyInstance {
+    authenticate: any;
+  }
+}
+
 const serverOptions: FastifyServerOptions = {
   logger: true,
 };
@@ -27,7 +33,7 @@ server.decorate(
     try {
       await request.jwtVerify();
     } catch (e) {
-      return await reply.send(e);
+      return reply.send(e);
     }
   }
 );

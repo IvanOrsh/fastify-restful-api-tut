@@ -31,5 +31,7 @@ module.exports = {
     "no-floating-promise": "off",
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/member-delimiter-style": "off",
+    indent: "off",
+    "@typescript-eslint/indent": "off",
   },
 };

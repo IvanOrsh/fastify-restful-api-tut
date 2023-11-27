@@ -39,3 +39,19 @@ export async function findUserByEmail(email: string): Promise<{
 
   return user;
 }
+
+export async function findUsers(): Promise<
+  Array<{
+    id: number;
+    email: string;
+    name: string | null;
+  }>
+> {
+  return await prisma.user.findMany({
+    select: {
+      email: true,
+      name: true,
+      id: true,
+    },
+  });
+}

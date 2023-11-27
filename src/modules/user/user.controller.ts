@@ -1,6 +1,6 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
 
-import { createUser, findUserByEmail } from "./user.service";
+import { createUser, findUserByEmail, findUsers } from "./user.service";
 import {
   type CreateUserInput,
   type LoginInput,
@@ -65,4 +65,16 @@ export async function loginHandler(
   return await reply.code(401).send({
     message: "Invalid email or password",
   });
+}
+
+export async function getUsersHandler(): Promise<
+  Array<{
+    id: number;
+    email: string;
+    name: string | null;
+  }>
+> {
+  const users = await findUsers();
+
+  return users;
 }
