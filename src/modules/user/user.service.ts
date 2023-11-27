@@ -23,3 +23,19 @@ export async function createUser(input: CreateUserInput): Promise<{
 
   return user;
 }
+
+export async function findUserByEmail(email: string): Promise<{
+  id: number;
+  email: string;
+  name: string | null;
+  password: string;
+  salt: string;
+} | null> {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  return user;
+}
