@@ -6,6 +6,9 @@ import {
   type FastifyReply,
 } from "fastify";
 import fjwt from "@fastify/jwt";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
+import { withRefResolver } from "fastify-zod";
 
 import userRoutes from "./modules/user/user.route";
 import { userSchemas } from "./modules/user/user.schema";
@@ -41,6 +44,48 @@ async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
   // plugins
   app.register(fjwt, {
     secret: "fjdklsjdf djfglcmlt39",
+  });
+
+  app.register(
+    swagger,
+    withRefResolver({
+      swagger: {
+        info: {
+          title: "Fastify RESTful API Tutorial",
+          version: "1.0.0",
+        },
+        // schemes: ["http"],
+        // consumes: ["application/json"],
+        // produces: ["application/json"],
+        // tags: [
+        //   {
+        //     name: "users",
+        //     description: "Operations about users",
+        //   },
+        //   {
+        //     name: "products",
+        //     description: "Operations about products",
+        //   },
+        // ],
+      },
+    })
+  );
+
+  app.register(swaggerUi, {
+    routePrefix: "/docs",
+    uiConfig: {
+      docExpansion: "list",
+    },
+    uiHooks: {
+      onRequest: function (request, reply, next) {
+        next();
+      },
+      preHandler: function (request, reply, next) {
+        next();
+      },
+    },
+    staticCSP: true,
+    transformStaticCSP: (header) => header,
   });
 
   // decorators
