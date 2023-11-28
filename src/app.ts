@@ -9,6 +9,7 @@ import fjwt from "@fastify/jwt";
 
 import userRoutes from "./modules/user/user.route";
 import { userSchemas } from "./modules/user/user.schema";
+import { productSchemas } from "./modules/products/product.schema";
 
 declare module "fastify" {
   export interface FastifyInstance {
@@ -45,7 +46,7 @@ async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
   );
 
   // add schemas before registering routes
-  for (const schema of userSchemas) {
+  for (const schema of [...userSchemas, ...productSchemas]) {
     app.addSchema(schema);
   }
 
