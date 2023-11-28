@@ -1,6 +1,7 @@
 import {
   fastify,
   type FastifyServerOptions,
+  type FastifyInstance,
   type FastifyRequest,
   type FastifyReply,
 } from "fastify";
@@ -15,70 +16,44 @@ declare module "fastify" {
   }
 }
 
-let serverOptions: FastifyServerOptions = {
-  logger: {
-    level: "info",
-  },
-};
+export type AppOptions = Partial<FastifyServerOptions>;
 
-if (process.stdout.isTTY) {
-  serverOptions = {
-    logger: {
-      level: "info",
-      transport: {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-        },
-      },
-    },
-  };
-}
+async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
+  const app = fastify(options);
 
-const server = fastify(serverOptions);
+  app.get("/healthcheck", async function () {
+    return {
+      status: "OK",
+    };
+  });
 
-// plugins
-server.register(fjwt, {
-  secret: "fjdklsjdf djfglcmlt39",
-});
+  // plugins
+  app.register(fjwt, {
+    secret: "fjdklsjdf djfglcmlt39",
+  });
 
-// decorators
-server.decorate(
-  "authenticate",
-  async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      await request.jwtVerify();
-    } catch (e) {
-      return await reply.send(e);
+  // decorators
+  app.decorate(
+    "authenticate",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        await request.jwtVerify();
+      } catch (e) {
+        return await reply.send(e);
+      }
     }
-  }
-);
+  );
 
-server.get("/healthcheck", async function () {
-  return {
-    status: "OK",
-  };
-});
-
-void (async function main(): Promise<void> {
   // add schemas before registering routes
   for (const schema of userSchemas) {
-    server.addSchema(schema);
+    app.addSchema(schema);
   }
 
-  server.register(userRoutes, {
+  app.register(userRoutes, {
     prefix: "/api/users",
   });
 
-  try {
-    const address = await server.listen({
-      port: 3000,
-      host: "0.0.0.0",
-    });
+  return await app;
+}
 
-    console.log(`Server listening on ${address}`);
-  } catch (e) {
-    console.error(e);
-    process.exit(2);
-  }
-})();
+export { buildApp };
