@@ -17,6 +17,15 @@ declare module "fastify" {
   }
 }
 
+declare module "@fastify/jwt" {
+  export interface FastifyJWT {
+    user: {
+      id: number;
+      email: string;
+    };
+  }
+}
+
 export type AppOptions = Partial<FastifyServerOptions>;
 
 async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
