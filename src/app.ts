@@ -9,6 +9,7 @@ import fjwt from "@fastify/jwt";
 
 import userRoutes from "./modules/user/user.route";
 import { userSchemas } from "./modules/user/user.schema";
+import productRoutes from "./modules/products/product.route";
 import { productSchemas } from "./modules/products/product.schema";
 
 declare module "fastify" {
@@ -61,6 +62,9 @@ async function buildApp(options: AppOptions = {}): Promise<FastifyInstance> {
 
   app.register(userRoutes, {
     prefix: "/api/users",
+  });
+  app.register(productRoutes, {
+    prefix: "/api/products",
   });
 
   return await app;
