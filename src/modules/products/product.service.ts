@@ -29,6 +29,8 @@ export async function getProducts(): Promise<
       id: number;
       name: string | null;
     };
+    createdAt: Date;
+    updatedAt: Date;
   }>
 > {
   return await prisma.product.findMany({
@@ -43,6 +45,8 @@ export async function getProducts(): Promise<
           name: true,
         },
       },
+      createdAt: true,
+      updatedAt: true,
     },
   });
 }
