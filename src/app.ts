@@ -15,9 +15,25 @@ declare module "fastify" {
   }
 }
 
-const serverOptions: FastifyServerOptions = {
-  logger: true,
+let serverOptions: FastifyServerOptions = {
+  logger: {
+    level: "info",
+  },
 };
+
+if (process.stdout.isTTY) {
+  serverOptions = {
+    logger: {
+      level: "info",
+      transport: {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+        },
+      },
+    },
+  };
+}
 
 const server = fastify(serverOptions);
 
@@ -33,7 +49,7 @@ server.decorate(
     try {
       await request.jwtVerify();
     } catch (e) {
-      return reply.send(e);
+      return await reply.send(e);
     }
   }
 );
